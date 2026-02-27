@@ -1,0 +1,24 @@
+﻿{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "MTeam",
+	"Description": "Team management system for AI and gameplay",
+	"Category": "Other",
+	"CreatedBy": "Miknios",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "MTeam",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
+
