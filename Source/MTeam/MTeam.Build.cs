@@ -11,6 +11,8 @@ public class MTeam : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
+				"MDeveloperSettings",
+				
 				"Core", 
 				"AIModule",
 			}

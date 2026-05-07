@@ -3,6 +3,7 @@
 
 #include "Team/MTeamLibrary.h"
 
+#include "MDeveloperSettingsUtils.h"
 #include "Team/MTeamComponent.h"
 #include "Team/MTeamDefinition.h"
 #include "Team/MTeamSettings.h"
@@ -11,63 +12,6 @@
 void UMTeamLibrary::RegisterAttitudeSolver()
 {
 	FGenericTeamId::SetAttitudeSolver(&GetAttitude);
-}
-
-FGenericTeamId UMTeamLibrary::GetTeamIdForDefinition(const FMTeamDefinition& TeamDefinition)
-{
-	return GetTeamIdForTeamName(TeamDefinition.TeamName);
-}
-
-FGenericTeamId UMTeamLibrary::GetTeamIdForTeamName(const FName TeamName)
-{
-	UMTeamSettings* TeamSettings = UMTeamSettings::Get();
-	if (TeamSettings == nullptr)
-	{
-		return FGenericTeamId::NoTeam;
-	}
-
-	for (int i = 0; i < TeamSettings->Teams.Num(); ++i)
-	{
-		if (TeamSettings->Teams[i].TeamName == TeamName)
-		{
-			return i;
-		}
-	}
-
-	return FGenericTeamId::NoTeam;
-}
-
-TOptional<FMTeamDefinition> UMTeamLibrary::GetTeamDefinitionForTeamId(const FGenericTeamId TeamId)
-{
-	UMTeamSettings* TeamSettings = UMTeamSettings::Get();
-	if (TeamSettings == nullptr)
-	{
-		return NullOpt;
-	}
-
-	const bool bValidId = TeamSettings->Teams.IsValidIndex(TeamId.GetId());
-	if (!bValidId)
-	{
-		return NullOpt;
-	}
-
-	return TeamSettings->Teams[TeamId.GetId()];
-}
-
-TArray<FName> UMTeamLibrary::GetTeamNamesAll()
-{
-	TArray<FName> Result;
-
-	UMTeamSettings* TeamSettings = UMTeamSettings::Get();
-	if (TeamSettings != nullptr)
-	{
-		for (const FMTeamDefinition& Team : TeamSettings->Teams)
-		{
-			Result.Emplace(Team.TeamName);
-		}
-	}
-
-	return Result;
 }
 
 FGenericTeamId UMTeamLibrary::GetTeamIdForActor(const AActor* Actor)
@@ -112,25 +56,22 @@ ETeamAttitude::Type UMTeamLibrary::GetAttitude(const FGenericTeamId A, const FGe
 		return ETeamAttitude::Friendly;
 	}
 
-	UMTeamSettings* TeamSettings = UMTeamSettings::Get();
-
-	const TOptional<FMTeamDefinition> TeamA = GetTeamDefinitionForTeamId(A);
-	if (!TeamA.IsSet())
-	{
-		return ETeamAttitude::Neutral;
-	}
-
-	const TOptional<FMTeamDefinition> TeamB = GetTeamDefinitionForTeamId(B);
-	if (!TeamB.IsSet())
+	const UMTeamSettings* TeamSettings = M::DeveloperSettings::GetSettings<UMTeamSettings>();
+	if (TeamSettings == nullptr)
 	{
 		return ETeamAttitude::Neutral;
 	}
 
 	const FMTeamAttitudeOverride* AttitudeOverrideFound = TeamSettings->AttitudeOverrides.FindByPredicate(
-		[&TeamA, &TeamB](const FMTeamAttitudeOverride& AttitudeOverride)
+		[&A, &B](const FMTeamAttitudeOverride& AttitudeOverride)
 		{
-			return AttitudeOverride.TeamA == TeamA->TeamName && AttitudeOverride.TeamB == TeamB->TeamName
-				|| AttitudeOverride.TeamA == TeamB->TeamName && AttitudeOverride.TeamB == TeamA->TeamName;
+			if (AttitudeOverride.TeamADef == nullptr || AttitudeOverride.TeamBDef == nullptr)
+			{
+				return false;
+			}
+
+			return AttitudeOverride.TeamADef->TeamId == A && AttitudeOverride.TeamBDef->TeamId == B
+				|| AttitudeOverride.TeamADef->TeamId == B && AttitudeOverride.TeamBDef->TeamId == A;
 		});
 
 	if (AttitudeOverrideFound == nullptr)
@@ -163,5 +104,3 @@ IGenericTeamAgentInterface* UMTeamLibrary::GetTeamAgentInterfaceForActor(const A
 {
 	return GetTeamComponentForActor(Actor);
 }
-
-

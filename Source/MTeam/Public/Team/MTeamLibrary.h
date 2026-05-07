@@ -22,18 +22,6 @@ public:
 	static void RegisterAttitudeSolver();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MTeam|Team")
-	static FGenericTeamId GetTeamIdForDefinition(const FMTeamDefinition& TeamDefinition);
-
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MTeam|Team")
-	static FGenericTeamId GetTeamIdForTeamName(const FName TeamName);
-
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MTeam|Team")
-	static TOptional<FMTeamDefinition> GetTeamDefinitionForTeamId(const FGenericTeamId TeamId);
-
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MTeam|Team")
-	static TArray<FName> GetTeamNamesAll();
-
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MTeam|Team")
 	static FGenericTeamId GetTeamIdForActor(const AActor* Actor);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MTeam|Team")

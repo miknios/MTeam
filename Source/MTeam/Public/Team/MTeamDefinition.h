@@ -4,31 +4,29 @@
 
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
-
 #include "MTeamDefinition.generated.h"
+
+UCLASS()
+class UMTeamDefinitionAsset : public UDataAsset
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere)
+	FGenericTeamId TeamId;
+};
 
 USTRUCT(BlueprintType)
 struct MTEAM_API FMTeamAttitudeOverride
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (GetOptions = "MTeam.MTeamLibrary.GetTeamNamesAll"))
-	FName TeamA;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UMTeamDefinitionAsset> TeamADef;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (GetOptions = "MTeam.MTeamLibrary.GetTeamNamesAll"))
-	FName TeamB;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UMTeamDefinitionAsset> TeamBDef;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TEnumAsByte<ETeamAttitude::Type> Attitude = ETeamAttitude::Neutral;
 };
-
-USTRUCT(BlueprintType)
-struct MTEAM_API FMTeamDefinition
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	FName TeamName;
-};
-
-

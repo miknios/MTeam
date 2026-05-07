@@ -8,18 +8,17 @@
 
 FGenericTeamId UMTeamComponent::GetGenericTeamId() const
 {
-	return UMTeamLibrary::GetTeamIdForTeamName(AssignedTeamName);
-}
-
-void UMTeamComponent::SetGenericTeamId(const FGenericTeamId& TeamID)
-{
-	TOptional<FMTeamDefinition> TeamDefinition = UMTeamLibrary::GetTeamDefinitionForTeamId(TeamID);
-	if (!TeamDefinition.IsSet())
+	if (TeamDefinitionAsset == nullptr)
 	{
-		return;
+		return FGenericTeamId::NoTeam;
 	}
 
-	AssignedTeamName = TeamDefinition->TeamName;
+	return TeamDefinitionAsset->TeamId;
+}
+
+// TODO: find FMTeamDefinitionAsset matching the TeamID
+void UMTeamComponent::SetGenericTeamId(const FGenericTeamId& TeamID)
+{
 }
 
 ETeamAttitude::Type UMTeamComponent::GetTeamAttitudeTowards(const AActor& Other) const
@@ -29,18 +28,16 @@ ETeamAttitude::Type UMTeamComponent::GetTeamAttitudeTowards(const AActor& Other)
 	{
 		return ETeamAttitude::Neutral;
 	}
-	
+
 	return UMTeamLibrary::GetAttitude(GetGenericTeamId(), OtherAgent->GetGenericTeamId());
 }
 
-void UMTeamComponent::SetTeam(const FName InTeamName)
+void UMTeamComponent::SetTeam(const UMTeamDefinitionAsset* InTeamDefinitionAsset)
 {
-	AssignedTeamName = InTeamName;
+	TeamDefinitionAsset = const_cast<UMTeamDefinitionAsset*>(InTeamDefinitionAsset);
 }
 
-FName UMTeamComponent::GetAssignedTeam() const
+UMTeamDefinitionAsset* UMTeamComponent::GetAssignedTeam() const
 {
-	return AssignedTeamName;
+	return TeamDefinitionAsset;
 }
-
-

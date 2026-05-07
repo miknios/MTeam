@@ -8,6 +8,8 @@
 #include "MTeamComponent.generated.h"
 
 
+class UMTeamDefinitionAsset;
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class MTEAM_API UMTeamComponent : public UActorComponent, public IGenericTeamAgentInterface
 {
@@ -21,14 +23,14 @@ public:
 	// ~ IGenericTeamAgentInterface
 	
 	UFUNCTION(BlueprintCallable, Category = "Team")
-	void SetTeam(const FName InTeamName);
+	void SetTeam(const UMTeamDefinitionAsset* InTeamDefinitionAsset);
 	
 	UFUNCTION(BlueprintCallable, Category = "Team")
-	FName GetAssignedTeam() const;
+	UMTeamDefinitionAsset* GetAssignedTeam() const;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team", meta = (GetOptions = "MTeam.MTeamLibrary.GetTeamNamesAll"))
-	FName AssignedTeamName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
+	TObjectPtr<UMTeamDefinitionAsset> TeamDefinitionAsset;
 };
 
 
